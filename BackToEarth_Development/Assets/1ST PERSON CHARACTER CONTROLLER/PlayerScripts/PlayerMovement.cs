@@ -12,17 +12,18 @@ public Transform orientation;
 public Transform groundcheck;
 private Vector3 PlayerVelocity;
 public LayerMask groundLayer;
-public float lastJumped;
 private float moveSpeed = 8;
 
 private float jumpHeight = 3;
 
 private float gravityValue = -10f;
+private float wiggleroom = -0.1f;
 
 
 public float lastGrounded;
 public float tempGroundtime;
 public bool isGrounded;
+public bool canJump;
 
     void Start()
     {
@@ -73,6 +74,10 @@ public bool isGrounded;
         controller.Move(PlayerVelocity * Time.deltaTime);
     }
 
+
+
+
+
 private void playerphysics()
 {
 isGrounded = Physics.CheckSphere(groundcheck.position, 0.2f, groundLayer);
@@ -85,23 +90,39 @@ if (isGrounded)
 {
     PlayerVelocity.y = -3f;
     lastGrounded = 0f;
-    
 }
 else
 {
 gravity();    
 }
+
+
+
+if (lastGrounded > wiggleroom)
+{
+    canJump = true;
+}
+else 
+{
+    canJump = false;
+}
+
+
 Debug.DrawRay(groundcheck.position, transform.TransformDirection(Vector3.up) * 0.4f, Color.red);
+
 
 }
 
 
+
+
+
+
+
     private void jump()
     {
-        lastJumped -= Time.deltaTime; 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && canJump)
         {
-            
             PlayerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
             Debug.Log("jump");
         }
